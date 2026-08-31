@@ -57,7 +57,6 @@ expedition-nexus/
 ├── script.js
 ├── README.md
 ├── ATTRIBUTIONS.md
-├── LICENSE
 └── assets/
     └── images/
         └── expedition-nexus-preview.png
