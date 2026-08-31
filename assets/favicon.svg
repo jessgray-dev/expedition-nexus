@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#121a21"/>
+  <rect
+    x="4"
+    y="4"
+    width="56"
+    height="56"
+    fill="none"
+    stroke="#d99545"
+    stroke-width="4"
+  />
+  <text
+    x="32"
+    y="40"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="24"
+    font-weight="700"
+    fill="#e8e5dc"
+  >NX</text>
+</svg>
