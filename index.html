@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Expedition Nexus</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header id="app-header" class="app-header hidden">
+        <button class="brand-button" data-screen="mission-screen" aria-label="Return to Mission Control">
+            <span class="brand-mark">NX</span>
+            <span>
+                <strong>Expedition Nexus</strong>
+                <small>Mission Control</small>
+            </span>
+        </button>
+        <div class="header-status">
+            <span id="header-explorer">Explorer</span>
+            <span id="header-progress">0 / 3 systems online</span>
+        </div>
+    </header>
+
+    <main>
+        <section id="access-screen" class="screen access-screen">
+            <div class="access-shell">
+                <div class="access-copy">
+                    <p class="kicker">Emergency access // Expedition Nexus</p>
+                    <h1>Expedition<br>Nexus</h1>
+                    <p class="lead">Three station systems are offline. Restore them, authorize the route, and launch one
+                        expedition.</p>
+                </div>
+
+                <div class="access-panel">
+                    <p class="panel-label">Operator identification</p>
+                    <form id="access-form">
+                        <label for="explorer-name">Explorer name</label>
+                        <input id="explorer-name" name="explorerName" type="text" maxlength="24" autocomplete="off"
+                            required>
+                        <p id="access-error" class="form-message" aria-live="polite"></p>
+                        <button class="button button-primary" type="submit">Begin recovery</button>
+                    </form>
+                    <button id="continue-session" class="button button-secondary hidden" type="button"></button>
+                </div>
+            </div>
+        </section>
+
+        <section id="mission-screen" class="screen hidden">
+            <div class="page-width">
+                <div class="page-intro">
+                    <p class="kicker">Central operations</p>
+                    <h2>Mission Control</h2>
+                    <p id="mission-intro">Restore each critical system in sequence. Optional station labs are available
+                        at any time.</p>
+                </div>
+
+                <div class="station-layout">
+                    <div class="station-core">
+                        <span>Mission Control</span>
+                        <strong id="station-readiness">Recovery 0%</strong>
+                    </div>
+
+                    <button id="nav-system-card" class="system-node" data-screen="navigation-screen">
+                        <span class="system-index">01</span>
+                        <strong>Navigation</strong>
+                        <span id="nav-system-status" class="system-state">Available</span>
+                    </button>
+
+                    <button id="research-system-card" class="system-node" data-screen="research-screen">
+                        <span class="system-index">02</span>
+                        <strong>Research</strong>
+                        <span id="research-system-status" class="system-state">Locked</span>
+                    </button>
+
+                    <button id="comms-system-card" class="system-node" data-screen="communications-screen">
+                        <span class="system-index">03</span>
+                        <strong>Communications</strong>
+                        <span id="comms-system-status" class="system-state">Locked</span>
+                    </button>
+                </div>
+
+                <div id="launch-strip" class="launch-strip">
+                    <div>
+                        <p class="panel-label">Launch authorization</p>
+                        <strong id="launch-status">Denied — restore 3 systems</strong>
+                    </div>
+                    <button id="launch-button" class="button button-primary" type="button" disabled>Initiate
+                        expedition</button>
+                </div>
+
+                <section class="labs-directory">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Optional</p>
+                            <h3>Station Labs</h3>
+                        </div>
+                        <span>Short side challenges. Not required for launch.</span>
+                    </div>
+
+                    <div class="lab-grid">
+                        <button class="lab-link" data-screen="engineering-screen">
+                            <span>Engineering</span>
+                            <strong>Build a valid field kit</strong>
+                            <small id="engineering-badge">Not completed</small>
+                        </button>
+
+                        <button class="lab-link" data-screen="tactical-screen">
+                            <span>Tactical</span>
+                            <strong>Win a two-point simulation</strong>
+                            <small id="tactical-badge">Not completed</small>
+                        </button>
+
+                        <button class="lab-link" data-screen="temporal-screen">
+                            <span>Temporal</span>
+                            <strong>Resolve three era signatures</strong>
+                            <small id="temporal-badge">Not completed</small>
+                        </button>
+
+                        <button class="lab-link" data-screen="knowledge-screen">
+                            <span>Academy</span>
+                            <strong>Pass one live knowledge check</strong>
+                            <small id="knowledge-badge">Not completed</small>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="archive-section">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Recovered archive</p>
+                            <h3>Mission imagery</h3>
+                        </div>
+
+                        <button id="archive-next" class="square-button" type="button"
+                            aria-label="Show next archive image">
+                            →
+                        </button>
+                    </div>
+
+                    <div id="archive-track" class="archive-track"></div>
+                </section>
+
+                <button id="reset-progress" class="text-button danger-text" type="button">
+                    Reset saved progress
+                </button>
+            </div>
+        </section>
+
+        <section id="navigation-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">System 01</p>
+                    <h2>Navigation</h2>
+                    <p>Choose a destination and ship. Route analysis will produce the values required to recalibrate the
+                        station.</p>
+                </div>
+
+                <section class="work-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 1</p>
+                            <h3>Destination scanner</h3>
+                        </div>
+                        <div class="scanner-controls">
+                            <button id="destination-prev" class="square-button" type="button"
+                                aria-label="Previous destination">←</button>
+                            <button id="destination-next" class="square-button" type="button"
+                                aria-label="Next destination">→</button>
+                        </div>
+                    </div>
+                    <div id="destination-card" class="destination-card"></div>
+                </section>
+
+                <section class="work-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 2</p>
+                            <h3>Select a vessel</h3>
+                        </div>
+                    </div>
+                    <div id="ship-options" class="ship-options"></div>
+                    <button id="analyze-route" class="button button-primary" type="button">Analyze route</button>
+                </section>
+
+                <section id="route-analysis-panel" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 3</p>
+                            <h3>Route analysis</h3>
+                        </div>
+                        <span id="route-label" class="status-chip">Ready</span>
+                    </div>
+                    <div id="route-analysis" class="analysis-grid"></div>
+                    <p class="instruction-note">Use the required settings below exactly. Changing the ship or
+                        destination invalidates this analysis.</p>
+
+                    <div class="calibration-panel">
+                        <div class="toggle-stack">
+                            <label><span>Quantum stabilizer</span><input id="quantum-switch" type="checkbox"></label>
+                            <label><span>Reverse polarity</span><input id="polarity-switch" type="checkbox"></label>
+                            <label><span>Navigation relay</span><input id="relay-switch" type="checkbox"></label>
+                        </div>
+                        <div class="slider-stack">
+                            <label for="power-slider">Gate power <strong id="power-readout">5</strong></label>
+                            <input id="power-slider" type="range" min="1" max="10" value="5">
+                            <label for="flux-slider">Flux intensity <strong id="flux-readout">5</strong></label>
+                            <input id="flux-slider" type="range" min="1" max="10" value="5">
+                        </div>
+                    </div>
+
+                    <button id="calibrate-navigation" class="button button-primary" type="button">Run
+                        calibration</button>
+                    <p id="navigation-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+            </div>
+        </section>
+
+        <section id="research-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">System 02</p>
+                    <h2>Research</h2>
+                    <p id="research-intro">Reconstruct the probe survey, inspect the resulting sightings, and confirm
+                        the target organism.</p>
+                </div>
+
+                <section class="work-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 1</p>
+                            <h3>Terrain survey</h3>
+                        </div>
+                        <span id="survey-status" class="status-chip">Incomplete</span>
+                    </div>
+                    <div id="survey-brief" class="survey-brief"></div>
+                    <div class="terrain-legend">
+                        <span><i class="legend-swatch terrain-empty"></i> Unmapped</span>
+                        <span><i class="legend-swatch terrain-rock"></i> Rock</span>
+                        <span><i class="legend-swatch terrain-water"></i> Water</span>
+                        <span><i class="legend-swatch terrain-grass"></i> Vegetation</span>
+                        <span><i class="legend-swatch terrain-ruins"></i> Ruins</span>
+                    </div>
+                    <div id="terrain-grid" class="terrain-grid"></div>
+                    <button id="analyze-survey" class="button button-primary" type="button">Analyze survey</button>
+                    <p id="survey-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+
+                <section id="observations-panel" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 2</p>
+                            <h3>Observation database</h3>
+                        </div>
+                    </div>
+                    <p id="target-prompt" class="instruction-note"></p>
+                    <label class="filter-control" for="sector-filter">Filter by sector
+                        <select id="sector-filter">
+                            <option value="all">All sectors</option>
+                        </select>
+                    </label>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Species</th>
+                                    <th>Count</th>
+                                    <th>Sector</th>
+                                    <th>Diet</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="sightings-body"></tbody>
+                        </table>
+                    </div>
+                    <p id="sighting-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+
+                <section id="scanner-panel" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Step 3</p>
+                            <h3>Biological scanner</h3>
+                        </div>
+                        <span id="scanner-status" class="status-chip">3 pairs required</span>
+                    </div>
+                    <p id="scanner-copy"></p>
+                    <button id="start-scanner" class="button button-secondary" type="button">Load sample set</button>
+                    <div id="memory-board" class="memory-board"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="communications-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">System 03</p>
+                    <h2>Communications</h2>
+                    <p>Turn the recovered mission data into a field transmission, review it, then send it to restore the
+                        communications array.</p>
+                </div>
+
+                <section class="work-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Recovered mission data</p>
+                            <h3>Complete field report</h3>
+                        </div>
+                    </div>
+                    <div id="report-facts" class="report-facts"></div>
+
+                    <form id="report-form" class="report-form">
+                        <p class="instruction-note">
+                            Several fields in the recovered report are incomplete. Supply the missing observations so
+                            Mission Control can reconstruct the transmission.
+                        </p>
+
+                        <div class="form-grid">
+                            <label>
+                                Encounter classification
+                                <small class="field-hint">Adjective</small>
+                                <input name="adjective" type="text" placeholder="Enter one word" required>
+                            </label>
+
+                            <label>
+                                Movement pattern
+                                <small class="field-hint">Adverb</small>
+                                <input name="adverb" type="text" placeholder="Enter one word" required>
+                            </label>
+
+                            <label>
+                                Observed behavior
+                                <small class="field-hint">Verb ending in -ing</small>
+                                <input name="verbIng" type="text" placeholder="Enter an action" required>
+                            </label>
+
+                            <label>
+                                Nearby object or feature
+                                <small class="field-hint">Noun</small>
+                                <input name="noun" type="text" placeholder="Enter a noun" required>
+                            </label>
+
+                            <label>
+                                Signal color
+                                <small class="field-hint">Instrument reading</small>
+                                <select name="color" required>
+                                    <option value="" selected disabled>Select detected color</option>
+                                    <option value="amber">Amber</option>
+                                    <option value="blue">Blue</option>
+                                    <option value="green">Green</option>
+                                    <option value="violet">Violet</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="observation-builder">
+                            <div class="section-heading compact">
+                                <div>
+                                    <p class="panel-label">Field notes</p>
+                                    <h3>Additional observations</h3>
+                                </div>
+                                <button id="add-observation" class="text-button" type="button">+ Add
+                                    observation</button>
+                            </div>
+                            <div id="observation-fields"></div>
+                        </div>
+
+                        <button class="button button-primary" type="submit">Generate transmission</button>
+                    </form>
+                </section>
+
+                <section id="transmission-panel" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Draft</p>
+                            <h3>Field transmission</h3>
+                        </div>
+                        <button id="regenerate-report" class="text-button" type="button">Generate another
+                            version</button>
+                    </div>
+                    <blockquote id="transmission-text" class="transmission-text"></blockquote>
+                    <button id="send-transmission" class="button button-primary" type="button">Transmit report</button>
+                    <p id="transmission-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+            </div>
+        </section>
+
+        <section id="launch-screen" class="screen launch-screen hidden">
+            <div class="launch-console">
+                <p class="kicker">Launch sequence</p>
+                <h2 id="launch-destination">Expedition route locked</h2>
+                <div id="launch-log" class="launch-log"></div>
+                <div class="launch-meter"><span id="launch-meter-fill"></span></div>
+                <button id="debrief-button" class="button button-primary hidden" type="button">Open mission
+                    debrief</button>
+            </div>
+        </section>
+
+        <section id="debrief-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <div class="debrief-heading">
+                    <p class="kicker">Expedition successful</p>
+                    <h2>Mission debrief</h2>
+                </div>
+                <section class="work-panel">
+                    <div id="debrief-summary" class="debrief-summary"></div>
+                </section>
+                <section class="work-panel">
+                    <p class="panel-label">Guided mission</p>
+                    <h3>What the experience used</h3>
+                    <div class="concept-list">
+                        <span>Forms & validation</span><span>Application state</span><span>DOM
+                            rendering</span><span>Arrays & objects</span>
+                        <span>Filtering</span><span>Calculations</span><span>localStorage</span><span>Conditional
+                            logic</span>
+                        <span>Dynamic form fields</span><span>Random templates</span><span>CSS
+                            transitions</span><span>Game state</span>
+                    </div>
+                </section>
+                <div class="debrief-actions">
+                    <button class="button button-primary" data-screen="mission-screen" type="button">Explore Station
+                        Labs</button>
+                    <button id="restart-mission" class="button button-secondary" type="button">Run mission
+                        again</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="engineering-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">Optional lab</p>
+                    <h2>Engineering</h2>
+                    <p>Prepare a low-gravity survey kit with mobility and scanning capability while staying at or below
+                        300 credits.</p>
+                </div>
+
+                <section class="work-panel">
+                    <div class="engineering-brief">
+                        <span>Budget <strong>300 cr</strong></span>
+                        <span>Required <strong>Mobility + scanning</strong></span>
+                        <span id="engineering-total">Selected <strong>0 cr</strong></span>
+                    </div>
+                    <div id="equipment-grid" class="equipment-grid"></div>
+                    <button id="submit-loadout" class="button button-primary" type="button">Submit loadout</button>
+                    <p id="loadout-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+
+                <section id="equipment-database" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Approved inventory</p>
+                            <h3>Equipment database</h3>
+                        </div>
+                    </div>
+                    <p class="instruction-note">Select an approved item to inspect its field specifications.</p>
+                    <div id="inventory-grid" class="inventory-grid"></div>
+                </section>
+
+                <section id="fabrication-panel" class="work-panel hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="panel-label">Fabrication challenge</p>
+                            <h3>Build one working upgrade</h3>
+                        </div>
+                    </div>
+                    <p class="instruction-note">Recovered engineering note: a conductive mineral paired with a
+                        stabilizing gel can safely overdrive tactical hardware.</p>
+                    <div id="material-options" class="material-options"></div>
+                    <div id="fabricator" class="fabricator">
+                        <div id="fabricator-slot-1" class="fabricator-slot">Empty</div>
+                        <span>+</span>
+                        <div id="fabricator-slot-2" class="fabricator-slot">Empty</div>
+                    </div>
+                    <button id="fabricate-button" class="button button-primary" type="button">Fabricate</button>
+                    <p id="fabrication-feedback" class="form-message" aria-live="polite"></p>
+                </section>
+            </div>
+        </section>
+
+        <section id="tactical-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">Optional lab</p>
+                    <h2>Tactical Simulator</h2>
+                    <p>First to two points wins. Fabricated engineering upgrades apply automatically.</p>
+                </div>
+                <section class="work-panel tactical-panel">
+                    <div class="scoreboard">
+                        <span>Explorer <strong id="player-score">0</strong></span>
+                        <span>Guardian <strong id="guardian-score">0</strong></span>
+                    </div>
+                    <p id="upgrade-note" class="instruction-note"></p>
+                    <div class="battle-row">
+                        <div>
+                            <p class="panel-label">Your drone</p>
+                            <div id="player-battle-card" class="battle-card">
+                                <div class="card-face card-back">?</div>
+                                <div class="card-face card-front"></div>
+                            </div>
+                        </div>
+                        <strong class="versus">VS</strong>
+                        <div>
+                            <p class="panel-label">Guardian</p>
+                            <div id="guardian-battle-card" class="battle-card">
+                                <div class="card-face card-back">?</div>
+                                <div class="card-face card-front"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="battle-feedback" class="battle-feedback">Draw cards to begin.</p>
+                    <button id="draw-cards" class="button button-primary" type="button">Draw cards</button>
+                    <button id="reset-battle" class="button button-secondary hidden" type="button">Run simulation
+                        again</button>
+                </section>
+            </div>
+        </section>
+
+        <section id="temporal-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">
+                    ← Mission Control
+                </button>
+
+                <div class="page-intro left">
+                    <p class="kicker">Optional lab</p>
+                    <h2>Temporal Research</h2>
+                    <p>
+                        Three signals have been recovered from unknown eras. Use each clue
+                        to estimate a plausible year. A successful match unlocks its archive image.
+                    </p>
+                </div>
+
+                <section class="work-panel temporal-panel">
+                    <div>
+                        <div class="temporal-image-wrap">
+                            <div id="temporal-lock" class="temporal-lock">
+                                <p class="panel-label">Archive image locked</p>
+                                <strong>Temporal signal unresolved</strong>
+                                <span>Resolve the target signature to reveal this record.</span>
+                            </div>
+
+                            <div id="temporal-image-fallback" class="image-fallback">
+                                Archive image unavailable
+                            </div>
+
+                            <img id="temporal-image" class="hidden" alt="" data-fallback="true">
+                        </div>
+
+                        <small id="temporal-credit" class="image-credit"></small>
+                    </div>
+
+                    <div class="temporal-readout">
+                        <p id="temporal-label" class="panel-label">
+                            Target signature 01
+                        </p>
+
+                        <h3 id="temporal-target"></h3>
+
+                        <p id="temporal-hint"></p>
+
+                        <p id="temporal-instruction" class="temporal-instruction"></p>
+
+                        <div id="temporal-controls" class="temporal-controls">
+                            <input id="temporal-year" type="number" placeholder="Estimate a year">
+
+                            <button id="scan-temporal" class="button button-primary" type="button">
+                                Analyze
+                            </button>
+                        </div>
+
+                        <p id="temporal-feedback" class="form-message" aria-live="polite"></p>
+
+                        <button id="next-temporal" class="button button-secondary hidden" type="button">
+                            Analyze next signal
+                        </button>
+
+                        <p id="temporal-progress" class="status-chip">
+                            0 / 3 resolved
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section id="knowledge-screen" class="screen hidden">
+            <div class="page-width narrow">
+                <button class="back-link" data-screen="mission-screen" type="button">← Mission Control</button>
+                <div class="page-intro left">
+                    <p class="kicker">Optional lab</p>
+                    <h2>Academy Knowledge Check</h2>
+                    <p>Answer one live science question correctly to earn station certification.</p>
+                </div>
+                <section class="work-panel knowledge-panel">
+                    <button id="request-question" class="button button-primary" type="button">Request question</button>
+                    <div id="question-panel" class="hidden">
+                        <p id="question-source" class="panel-label">Academy network</p>
+                        <h3 id="question-text"></h3>
+                        <div id="answer-options" class="answer-options"></div>
+                        <p id="knowledge-feedback" class="form-message" aria-live="polite"></p>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>
